@@ -1,50 +1,45 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import "./App.css";
 
 function App() {
 
-  const [counter, setCounter] = useState(0);
-  const [date, setDate] = useState(""); // Add date state
-  // Note for useState
-//1.counter - a variable which at first has a value of 0
-//2. setCounter - a function that can change counter  
+ // step 1
+ const initialState = { count: 0, date: "" };
 
-useEffect( ()=>{
-  // typeof is used when you want to find out which datatype is being used
-  console.log(typeof(Number(localStorage.getItem("count"))))  
-  // the function Number is used to convert from string to number
-  // console.log(typeof(localStorage.getItem("count")))
-  setCounter(Number(localStorage.getItem("count")))
+ // step 2
+ function reducer(state, action) {
+   if (action =="inc") {
+     return { count: state.count + 1, date: new Date().toString() };
+   } else if (action == "dsc") {
+     return { count: state.count - 1, date: new Date().toString() };
+   } else if (action =="rst") {
+     return { count: 0, date: new Date().toString() };
+   } else {
+     return { count: state.count, date: state.date };
+   }
+ }
 
-},[])
-// the box brackets are used for the useEffect function to run once when the app is restarted
+ //step 3
 
-function handleInc (){
-  setDate(new Date().toString())
-  localStorage.setItem("count", counter + 1)
-  setCounter(counter + 1)
-}
+ const [state, dispatch] = useReducer(reducer, initialState);
 
-function handleDec (){
-  localStorage.setItem("count",counter -1)
-  setCounter(counter -1)
-}
+ // dispatch function is same as reducer function 
+ // state is same as initialState 
 
   return (
     <>
        <div className='centerSection'>
          <h1>Counter</h1>
       <div className='counterSection'>
-      <button onClick={handleInc}>+</button>
-      <h3>{counter}</h3>
-      <button onClick={handleDec}>-</button>
+      <button onClick={()=> dispatch("inc")}>+</button>
+      <h3>{state.count}</h3>
+      <button onClick={()=> dispatch("dsc")}>-</button>
+      <br/><br/>
+      <button onClick={()=> dispatch("rst")}>RESET</button>
 
       </div>
+      <h3>{state.date}</h3>
        </div>
-         
-         <h3>{Date}</h3>
-      
-      
     </>
   )
 }
